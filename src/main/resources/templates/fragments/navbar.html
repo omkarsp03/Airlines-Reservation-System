@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <nav class="navbar" th:fragment="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">✈️</span>
+                <span class="logo-text">SkyWings</span>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/flights" class="nav-link">Flights</a>
+                <th:block th:if="${currentUser != null}">
+                    <a href="/my-bookings" class="nav-link">My Bookings</a>
+                    <a href="/logout" class="nav-link btn-logout">Logout</a>
+                </th:block>
+                <th:block th:if="${currentUser == null}">
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/register" class="nav-link btn-register">Register</a>
+                </th:block>
+            </div>
+        </div>
+    </nav>
+</body>
+</html>

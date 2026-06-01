@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmed - SkyWings Airlines</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="confirmation-page">
+    <div class="particles" id="particles"></div>
+    <div class="confirmation-container">
+        <div class="confirmation-card">
+            <div class="success-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+            </div>
+            <h1>Booking Confirmed!</h1>
+            <p class="confirmation-subtitle">Your flight has been booked successfully</p>
+            
+            <div class="ticket">
+                <div class="ticket-header">
+                    <div class="logo">
+                        <span class="logo-icon">✈️</span>
+                        <span class="logo-text">SkyWings</span>
+                    </div>
+                    <div class="booking-ref">
+                        <span class="ref-label">Booking Reference</span>
+                        <span class="ref-code" th:text="${booking.bookingReference}"></span>
+                    </div>
+                </div>
+
+                <div class="ticket-body">
+                    <div class="ticket-section">
+                        <h3>Flight Details</h3>
+                        <div class="ticket-info">
+                            <div class="info-item">
+                                <span class="info-label">Flight</span>
+                                <span class="info-value" th:text="${booking.flight.flightNumber}"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Airline</span>
+                                <span class="info-value" th:text="${booking.flight.airline}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ticket-section">
+                        <h3>Route</h3>
+                        <div class="ticket-route">
+                            <div class="route-point">
+                                <div class="city" th:text="${booking.flight.departureCity}"></div>
+                                <div class="time" th:text="${#temporals.format(booking.flight.departureTime, 'HH:mm')}"></div>
+                                <div class="date" th:text="${#temporals.format(booking.flight.departureTime, 'dd MMM yyyy')}"></div>
+                            </div>
+                            <div class="route-arrow">→</div>
+                            <div class="route-point">
+                                <div class="city" th:text="${booking.flight.arrivalCity}"></div>
+                                <div class="time" th:text="${#temporals.format(booking.flight.arrivalTime, 'HH:mm')}"></div>
+                                <div class="date" th:text="${#temporals.format(booking.flight.arrivalTime, 'dd MMM yyyy')}"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ticket-section">
+                        <h3>Passengers</h3>
+                        <div class="passenger-list">
+                            <div th:each="passenger : ${booking.passengers}" class="passenger-item">
+                                <span th:text="${passenger.fullName}"></span>
+                                <span class="passenger-details" th:text="${passenger.age} + ' years, ' + ${passenger.gender} + ' | Seat: ' + ${passenger.seatNumber}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ticket-section">
+                        <h3>Total Amount</h3>
+                        <div class="total-price" th:text="'₹' + ${booking.totalAmount}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="confirmation-actions">
+                <a href="/my-bookings" class="btn-primary">View My Bookings</a>
+                <a href="/" class="btn-secondary">Back to Home</a>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

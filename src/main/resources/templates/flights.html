@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Flights - SkyWings Airlines</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">✈️</span>
+                <span class="logo-text">SkyWings</span>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/flights" class="nav-link">Flights</a>
+                <th:block th:if="${currentUser != null}">
+                    <a href="/my-bookings" class="nav-link">My Bookings</a>
+                    <a href="/logout" class="nav-link btn-logout">Logout</a>
+                </th:block>
+                <th:block th:if="${currentUser == null}">
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/register" class="nav-link btn-register">Register</a>
+                </th:block>
+            </div>
+        </div>
+    </nav>
+
+    <section class="flights-section">
+        <div class="container">
+            <h1 class="section-title">Available Flights</h1>
+            
+            <div class="flights-grid">
+                <div th:each="flight : ${flights}" class="flight-card">
+                    <div class="flight-header">
+                        <span class="flight-number" th:text="${flight.flightNumber}"></span>
+                        <span class="flight-airline" th:text="${flight.airline}"></span>
+                    </div>
+                    <div class="flight-route">
+                        <div class="route-point">
+                            <div class="city" th:text="${flight.departureCity}"></div>
+                            <div class="time" th:text="${#temporals.format(flight.departureTime, 'HH:mm')}"></div>
+                            <div class="date" th:text="${#temporals.format(flight.departureTime, 'dd MMM')}"></div>
+                        </div>
+                        <div class="route-line">
+                            <div class="route-dot"></div>
+                            <div class="route-path">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+                                </svg>
+                            </div>
+                            <div class="route-dot"></div>
+                        </div>
+                        <div class="route-point arrival">
+                            <div class="city" th:text="${flight.arrivalCity}"></div>
+                            <div class="time" th:text="${#temporals.format(flight.arrivalTime, 'HH:mm')}"></div>
+                            <div class="date" th:text="${#temporals.format(flight.arrivalTime, 'dd MMM')}"></div>
+                        </div>
+                    </div>
+                    <div class="flight-footer">
+                        <div class="flight-price">
+                            <span class="price-label">Economy</span>
+                            <span class="price-value" th:text="'₹' + ${flight.priceEconomy}"></span>
+                        </div>
+                        <div class="flight-price">
+                            <span class="price-label">Business</span>
+                            <span class="price-value" th:text="'₹' + ${flight.priceBusiness}"></span>
+                        </div>
+                        <div class="flight-seats">
+                            <span th:text="${flight.availableSeatsEconomy} + ' economy, ' + ${flight.availableSeatsBusiness} + ' business'"></span>
+                        </div>
+                    </div>
+
+                    <div class="booking-form mt-3">
+                        <div class="form-group">
+                            <label>Number of Passengers</label>
+                            <input type="number" th:id="'passengers-' + ${flight.id}" value="1" min="1" class="passenger-input">
+                        </div>
+                        
+                        <div class="class-selector">
+                            <label class="radio-label">
+                                <input type="radio" th:name="'seatClass-' + ${flight.id}" value="ECONOMY" checked>
+                                <span class="radio-custom"></span>
+                                Economy
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" th:name="'seatClass-' + ${flight.id}" value="BUSINESS">
+                                <span class="radio-custom"></span>
+                                Business
+                            </label>
+                        </div>
+
+                        <form th:action="@{/seat-selection}" method="get" style="display: inline;">
+                            <input type="hidden" name="flightId" th:value="${flight.id}">
+                            <input type="hidden" name="passengers" th:value="1">
+                            <input type="hidden" name="seatClass" value="ECONOMY">
+                            <button type="button" class="btn-book" th:onclick="'selectSeats(' + ${flight.id} + ')'">
+                                Select Seats & Book
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div th:if="${flights == null or flights.isEmpty()}" class="no-flights">
+                    <div class="no-flights-icon">✈️</div>
+                    <h3>No flights found</h3>
+                    <p>Try adjusting your search criteria</p>
+                    <a href="/" class="btn-primary">Search Again</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script th:src="@{/js/app.js}"></script>
+    <script th:inline="javascript">
+        function selectSeats(flightId) {
+            const passengersInput = document.getElementById('passengers-' + flightId);
+            const passengers = passengersInput ? passengersInput.value : '1';
+            
+            const radioName = 'seatClass-' + flightId;
+            const selectedRadio = document.querySelector('input[name="' + radioName + '"]:checked');
+            const seatClass = selectedRadio ? selectedRadio.value : 'ECONOMY';
+            
+            window.location.href = '/seat-selection?flightId=' + flightId + '&passengers=' + passengers + '&seatClass=' + seatClass;
+        }
+    </script>
+</body>
+</html>

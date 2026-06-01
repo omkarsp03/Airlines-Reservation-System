@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Flight - SkyWings Airlines</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">✈️</span>
+                <span class="logo-text">SkyWings</span>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/flights" class="nav-link">Flights</a>
+                <th:block th:if="${currentUser != null}">
+                    <a href="/my-bookings" class="nav-link">My Bookings</a>
+                    <a href="/logout" class="nav-link btn-logout">Logout</a>
+                </th:block>
+                <th:block th:if="${currentUser == null}">
+                    <a href="/login" class="nav-link">Login</a>
+                    <a href="/register" class="nav-link btn-register">Register</a>
+                </th:block>
+            </div>
+        </div>
+    </nav>
+
+    <section class="booking-section">
+        <div class="container">
+            <h1 class="section-title">Complete Your Booking</h1>
+            
+            <div class="booking-wrapper">
+                <div class="flight-summary">
+                    <h2>Flight Details</h2>
+                    <div class="summary-item">
+                        <span class="label">Flight</span>
+                        <span class="value" th:text="${flight.flightNumber} + ' - ' + ${flight.airline}"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Class</span>
+                        <span class="value" th:text="${seatClass}"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Selected Seats</span>
+                        <span class="value" th:text="${#strings.listJoin(selectedSeats, ', ')}"></span>
+                    </div>
+                    <div class="summary-route">
+                        <div class="route-point">
+                            <div class="city" th:text="${flight.departureCity}"></div>
+                            <div class="time" th:text="${#temporals.format(flight.departureTime, 'HH:mm')}"></div>
+                        </div>
+                        <div class="route-arrow">→</div>
+                        <div class="route-point">
+                            <div class="city" th:text="${flight.arrivalCity}"></div>
+                            <div class="time" th:text="${#temporals.format(flight.arrivalTime, 'HH:mm')}"></div>
+                        </div>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Price per person</span>
+                        <span class="value price" th:text="'₹' + ${pricePerPerson}"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Passengers</span>
+                        <span class="value" th:text="${passengers}"></span>
+                    </div>
+                    <div class="total-amount">
+                        <span>Total Amount</span>
+                        <span th:text="'₹' + ${totalPrice}"></span>
+                    </div>
+                </div>
+
+                <form th:action="@{/booking}" method="post" class="booking-form">
+                    <input type="hidden" name="flightId" th:value="${flight.id}">
+                    <input type="hidden" name="seatClass" th:value="${seatClass}">
+                    <div th:each="seat : ${selectedSeats}">
+                        <input type="hidden" name="selectedSeats" th:value="${seat}">
+                    </div>
+                    
+                    <h2>Passenger Details</h2>
+                    
+                    <div th:each="i, iterStat : ${#numbers.sequence(1, passengers)}" class="passenger-section">
+                        <h3 class="passenger-title">
+                            Passenger <span th:text="${i}"></span> - Seat: <span th:text="${selectedSeats[iterStat.index]}"></span>
+                        </h3>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" name="passengerNames" placeholder="John Doe" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Age</label>
+                                <input type="number" name="passengerAges" min="1" max="120" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <select name="passengerGenders" required>
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-large">Confirm Booking</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>
