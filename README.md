@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ✈️ SkyWings Airlines Reservation System
 A modern, feature-rich airline reservation management system built with Spring Boot, featuring a beautiful glassmorphism UI, real-time seat selection, and persistent user sessions.
 
@@ -333,3 +334,4 @@ git push -u origin main
 
 ## �� License
 This project is licensed under the MIT License.
+
